@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Yakton — Deck</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<div class="ticker-strip" id="tickerStrip">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="index.html">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">YAKTON</span>
+    </a>
+
+    <ul class="nav-list">
+      <li>
+        <button class="nav-item active" data-view="stocks">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
+          Stocks
+        </button>
+      </li>
+      <li>
+        <button class="nav-item" data-view="games">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="10" rx="4"/><path d="M7 12h4M9 10v4M16 11h.01M18.5 13h.01"/></svg>
+          Games
+        </button>
+      </li>
+      <li>
+        <button class="nav-item" data-view="projects">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3.5 7.5L12 12l8.5-4.5M12 12v9"/></svg>
+          Projects
+        </button>
+      </li>
+    </ul>
+
+    <p class="sidebar-foot">
+      Prices come from <a href="https://stooq.com" target="_blank" rel="noopener">Stooq</a> (free, no key,
+      delayed end-of-day). Add a free
+      <a href="https://twelvedata.com/pricing" target="_blank" rel="noopener">Twelve Data</a> key in
+      <code>assets/js/stocks.js</code> for live intraday quotes instead.
+    </p>
+  </aside>
+
+  <main class="main">
+
+    <!-- ============ STOCKS ============ -->
+    <section class="view active" id="view-stocks">
+      <div class="view-head">
+        <h1>Stocks</h1>
+        <p>Look up a ticker, scrub the chart for a price at any point, and pin the ones you want to keep an eye on.</p>
+      </div>
+
+      <div class="search-row">
+        <input type="text" id="symbolInput" placeholder="Search a ticker — try AAPL, TSLA, NVDA" autocomplete="off" />
+        <button class="btn btn-primary" id="lookupBtn">Look up</button>
+        <button class="btn" id="watchToggleBtn">+ Watch</button>
+      </div>
+
+      <div class="stocks-layout">
+        <div>
+          <div class="panel quote-card" id="quoteCard">
+            <div class="quote-top">
+              <div>
+                <div class="quote-symbol" id="qSymbol">AAPL</div>
+                <div class="quote-name" id="qName">Apple Inc.</div>
+              </div>
+              <div style="text-align:right">
+                <div class="quote-price mono" id="qPrice">—</div>
+                <span class="quote-change mono" id="qChange">—</span>
+              </div>
+            </div>
+            <div class="quote-meta">
+              <div>Open<strong id="mOpen" class="mono">—</strong></div>
+              <div>Day high<strong id="mHigh" class="mono">—</strong></div>
+              <div>Day low<strong id="mLow" class="mono">—</strong></div>
+              <div>Prev close<strong id="mPrev" class="mono">—</strong></div>
+            </div>
+            <div class="data-flag" id="dataFlag">Loading real prices…</div>
+          </div>
+
+          <div class="range-row" id="rangeRow">
+            <button class="range-btn" data-range="1D">1D</button>
+            <button class="range-btn" data-range="1W">1W</button>
+            <button class="range-btn active" data-range="1M">1M</button>
+            <button class="range-btn" data-range="3M">3M</button>
+            <button class="range-btn" data-range="1Y">1Y</button>
+          </div>
+
+          <div class="panel chart-panel">
+            <div class="chart-canvas-wrap">
+              <canvas id="priceChart"></canvas>
+              <div class="chart-tooltip" id="chartTooltip">
+                <div class="t-price mono"></div>
+                <div class="t-date"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-col">
+          <div class="panel watchlist-panel">
+            <div class="watchlist-head">
+              <h3>Watchlist</h3>
+            </div>
+            <ul class="watchlist" id="watchlist"></ul>
+          </div>
+
+          <div class="panel popular-panel">
+            <h3>Popular</h3>
+            <div class="chip-row" id="popularChips"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GAMES ============ -->
+    <section class="view" id="view-games">
+      <div class="view-head">
+        <h1>Games</h1>
+        <p>Two small games, no install, no leaderboard pressure. Pick one.</p>
+      </div>
+
+      <div class="game-tabs">
+        <button class="game-tab active" data-game="ttt">Tic-tac-toe</button>
+        <button class="game-tab" data-game="snake">Snake</button>
+        <button class="game-tab" data-game="memory">Memory match</button>
+        <button class="game-tab" data-game="g2048">2048</button>
+      </div>
+
+      <div class="panel game-panel active" id="panel-ttt">
+        <p class="game-status" id="tttStatus">Your move — X starts.</p>
+        <div class="ttt-board" id="tttBoard"></div>
+        <div class="game-controls">
+          <button class="btn" id="tttReset">Reset board</button>
+        </div>
+      </div>
+
+      <div class="panel game-panel" id="panel-snake">
+        <div class="snake-wrap">
+          <div class="snake-score">Score: <strong id="snakeScore">0</strong></div>
+          <canvas id="snakeCanvas" width="360" height="360"></canvas>
+          <p class="snake-hint">Arrow keys or WASD to steer. Space to start / restart.</p>
+        </div>
+      </div>
+
+      <div class="panel game-panel" id="panel-memory">
+        <p class="game-status" id="memoryStatus">Find every pair in as few moves as you can.</p>
+        <div class="memory-board" id="memoryBoard"></div>
+        <div class="game-controls">
+          <button class="btn" id="memoryReset">Shuffle &amp; reset</button>
+        </div>
+      </div>
+
+      <div class="panel game-panel" id="panel-g2048">
+        <div class="g2048-wrap">
+          <div class="g2048-score">Score: <strong id="g2048Score">0</strong></div>
+          <div class="g2048-board" id="g2048Board"></div>
+          <p class="game-status" id="g2048Status">Arrow keys or WASD to slide the tiles.</p>
+          <div class="game-controls">
+            <button class="btn" id="g2048Reset">New game</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ PROJECTS ============ -->
+    <section class="view" id="view-projects">
+      <div class="view-head">
+        <h1>Projects</h1>
+        <p>Code you can pull straight from this deck. Swap in your own repos by editing <code>assets/js/projects-data.js</code>.</p>
+      </div>
+
+      <div class="project-grid" id="projectGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/js/projects-data.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/stocks.js"></script>
+<script src="assets/js/games.js"></script>
+<script src="assets/js/projects.js"></script>
+</body>
+</html>
